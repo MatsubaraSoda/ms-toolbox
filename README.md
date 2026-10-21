@@ -1,4 +1,4 @@
-# pdf-extract
+# pdf-isolate
 
 一个轻量的 PDF 页码提取命令行工具：从 PDF 中截取指定的页码范围，并另存为一个新的 PDF 文件。基于 [pypdf](https://github.com/py-pdf/pypdf) 构建。
 
@@ -14,21 +14,21 @@
 
 ```bash
 # 从 PyPI 安装（推荐）
-uv tool install pdf-extract
+uv tool install pdf-isolate
 
 # 或者不安装，直接临时运行一次
-uvx pdf-extract -i input.pdf -o output.pdf --start 5 --end 10
+uvx pdf-isolate -i input.pdf -o output.pdf --start 5 --end 10
 
 # 或者直接从 GitHub 仓库安装
-uv tool install git+https://github.com/MatsubaraSoda/pdf-extract
+uv tool install git+https://github.com/MatsubaraSoda/pdf-isolate
 ```
 
-没有 uv 也可以用 [pipx](https://pipx.pypa.io/)：`pipx install pdf-extract`。
+没有 uv 也可以用 [pipx](https://pipx.pypa.io/)：`pipx install pdf-isolate`。
 
 ## 使用
 
 ```bash
-pdf-extract -i input.pdf -o output.pdf --start 5 --end 10
+pdf-isolate -i input.pdf -o output.pdf --start 5 --end 10
 ```
 
 上面的命令会把 `input.pdf` 的第 5 页到第 10 页提取出来，保存为 `output.pdf`。
@@ -66,7 +66,7 @@ pdf-extract -i input.pdf -o output.pdf --start 5 --end 10
 
 ```python
 from pathlib import Path
-from pdf_extract.core import extract_and_save_pages, get_total_pages
+from pdf_isolate.core import extract_and_save_pages, get_total_pages
 
 # 获取 PDF 总页数，失败时返回 None
 total = get_total_pages(Path("input.pdf"))
@@ -83,8 +83,8 @@ ok = extract_and_save_pages(
 ## 本地开发
 
 ```bash
-git clone https://github.com/MatsubaraSoda/pdf-extract
-cd pdf-extract
+git clone https://github.com/MatsubaraSoda/pdf-isolate
+cd pdf-isolate
 uv sync          # 创建虚拟环境并安装依赖（含开发依赖）
 uv run pytest    # 运行测试
 ```
@@ -92,7 +92,7 @@ uv run pytest    # 运行测试
 也可以直接在开发环境中试用命令行工具：
 
 ```bash
-uv run pdf-extract -i tests/test_data/Campbell-Biology-Chapter-1.pdf -o sample.pdf --start 1 --end 3
+uv run pdf-isolate -i tests/test_data/Campbell-Biology-Chapter-1.pdf -o sample.pdf --start 1 --end 3
 ```
 
 ## 许可证

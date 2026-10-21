@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from pdf_extract.core import extract_and_save_pages
+from pdf_isolate.core import extract_and_save_pages
 import sys
 
 def main():

@@ -1,7 +1,7 @@
 import sys
 import pytest
 from pathlib import Path
-from pdf_extract.main import main
+from pdf_isolate.main import main
 
 TEST_PDF_PATH = Path(__file__).parent / "test_data" / "Campbell-Biology-Chapter-1.pdf"
 

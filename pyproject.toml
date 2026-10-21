@@ -1,5 +1,5 @@
 [project]
-name = "pdf-extract"
+name = "pdf-isolate"
 version = "0.1.0"
 description = "PDF 提取工具"
 readme = "README.md"
@@ -19,11 +19,11 @@ dev = [
 ]
 
 [project.scripts]
-pdf-extract = "pdf_extract.main:main"
+pdf-isolate = "pdf_isolate.main:main"
 
 [project.urls]
-Homepage = "https://github.com/MatsubaraSoda/pdf-extract"
-Issues = "https://github.com/MatsubaraSoda/pdf-extract/issues"
+Homepage = "https://github.com/MatsubaraSoda/pdf-isolate"
+Issues = "https://github.com/MatsubaraSoda/pdf-isolate/issues"
 
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]
