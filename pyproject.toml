@@ -1,7 +1,7 @@
 [project]
 name = "pdf-extract"
-version = "0.0.0"
-description = "Add your description here"
+version = "0.1.0"
+description = "PDF 提取工具"
 readme = "README.md"
 authors = [
     { name = "MatsubaraSoda", email = "matsubarasoda@gmail.com" }
