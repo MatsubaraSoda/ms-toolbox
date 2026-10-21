@@ -3,6 +3,8 @@ name = "pdf-extract"
 version = "0.1.0"
 description = "PDF 提取工具"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "MatsubaraSoda", email = "matsubarasoda@gmail.com" }
 ]
@@ -18,6 +20,10 @@ dev = [
 
 [project.scripts]
 pdf-extract = "pdf_extract.main:main"
+
+[project.urls]
+Homepage = "https://github.com/MatsubaraSoda/pdf-extract"
+Issues = "https://github.com/MatsubaraSoda/pdf-extract/issues"
 
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]
