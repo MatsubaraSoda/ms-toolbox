@@ -6,15 +6,18 @@ readme = "README.md"
 authors = [
     { name = "MatsubaraSoda", email = "matsubarasoda@gmail.com" }
 ]
-requires-python = ">=3.12, <3.13"
+requires-python = ">=3.12"
 dependencies = [
-    "pathlib>=1.0.1",
     "pypdf>=6.21.1",
+]
+
+[dependency-groups]
+dev = [
     "pytest>=9.1.1",
 ]
 
 [project.scripts]
-pdf-extract = "pdf_extract:main"
+pdf-extract = "pdf_extract.main:main"
 
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]

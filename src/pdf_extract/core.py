@@ -53,4 +53,5 @@ def extract_and_save_pages(input_file_path: Path, output_file_path: Path, start_
         return True
 
     except Exception as e:
-        print(f"处理 PDF 文件 '{input_file_path.name}' 时发生错误：{e}") 
+        print(f"处理 PDF 文件 '{input_file_path.name}' 时发生错误：{e}")
+        return False
