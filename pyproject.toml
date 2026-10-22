@@ -1,7 +1,7 @@
 [project]
-name = "pdf-isolate"
-version = "0.1.0"
-description = "PDF 提取工具"
+name = "ms-toolbox"
+version = "0.1.1"
+description = "MatsubaraSoda 个人工具箱"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -19,11 +19,11 @@ dev = [
 ]
 
 [project.scripts]
-pdf-isolate = "pdf_isolate.main:main"
+pdf-extract = "ms_toolbox.pdf.main:main"
 
 [project.urls]
-Homepage = "https://github.com/MatsubaraSoda/pdf-isolate"
-Issues = "https://github.com/MatsubaraSoda/pdf-isolate/issues"
+Homepage = "https://github.com/MatsubaraSoda/ms-toolbox"
+Issues = "https://github.com/MatsubaraSoda/ms-toolbox/issues"
 
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]

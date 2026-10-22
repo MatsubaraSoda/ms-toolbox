@@ -1,5 +1,5 @@
 from pathlib import Path
-from pdf_isolate.core import get_total_pages, extract_and_save_pages
+from ms_toolbox.pdf.core import get_total_pages, extract_and_save_pages
 
 TEST_PDF_PATH = Path(__file__).parent / "test_data" / "Campbell-Biology-Chapter-1.pdf"
 

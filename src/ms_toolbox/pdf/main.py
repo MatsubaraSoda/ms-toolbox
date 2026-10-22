@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from pdf_isolate.core import extract_and_save_pages
+from ms_toolbox.pdf.core import extract_and_save_pages
 import sys
 
 def main():
@@ -57,7 +57,7 @@ def main():
             sys.exit(1)
 
     except Exception as e:
-        print(f"\n发生意料之外的错误：{e}", file=sys.stderr)
+        print(f"\n发生意外错误：{e}", file=sys.stderr)
         sys.exit(2)
 
 if __name__ == '__main__':
