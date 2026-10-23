@@ -40,6 +40,29 @@ pdf-extract -i input.pdf -o output.pdf --start 5 --end 10
 成功提取第 5 页到第 10 页，并保存到 'output.pdf'。
 ```
 
+### tag-combos — 读取标签树 CSV，生成所有可能的标签组合
+
+```bash
+tag-combos -i tags.csv
+```
+
+输入格式见 [`tests/tag/test_data/test_tags.csv`](tests/tag/test_data/test_tags.csv)。从 `<root>` 开始递归遍历标签树（邻接表存储，深度优先展开）生成所有可能的标签组合；`<root>` 和带 `<hidden>` 前缀的节点仅用于组织树结构，不会进入最终组合。结果逐行输出到 stdout，可直接重定向保存：`tag-combos -i tags.csv > combos.txt`。
+
+| 参数 | 必填 | 说明 |
+| --- | --- | --- |
+| `-i`, `--input` | 是 | 输入标签树 CSV 文件路径 |
+
+退出码：`0` 成功；`2` 意外错误（如 CSV 文件不存在）。状态信息输出到 stderr，组合结果输出到 stdout。
+
+```text
+--- 正在启动标签组合生成工具 ---
+输入文件：tags.csv
+masterpiece, best_quality, safe, 1girl, long_hair, very_long_hair, black_hair, dress, standing, tachi-e, white_background
+masterpiece, best_quality, safe, 1girl, long_hair, very_long_hair, black_hair, dress, lying, on_back, white_background
+...
+共生成 18 个标签组合
+```
+
 ## 本地开发
 
 ```bash
