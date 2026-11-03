@@ -10,7 +10,9 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "platformdirs>=4.14.0",
     "pypdf>=6.21.1",
+    "pyyaml>=6.0.3",
 ]
 
 [dependency-groups]
@@ -20,7 +22,8 @@ dev = [
 
 [project.scripts]
 pdf-extract = "ms_toolbox.pdf.main:main"
-tag-combos = "ms_toolbox.tag.main:main"
+tag-csv2str = "ms_toolbox.tag.main:cli_tag_csv2str"
+tag-tag2nl = "ms_toolbox.tag.main:cli_tag_tag2nl"
 
 [project.urls]
 Homepage = "https://github.com/MatsubaraSoda/ms-toolbox"
