@@ -10,9 +10,13 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "docstring-parser>=0.18.0",
+    "pathspec>=1.1.1",
     "platformdirs>=4.14.0",
     "pypdf>=6.21.1",
     "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+    "websockets>=17.4",
 ]
 
 [dependency-groups]
@@ -21,6 +25,7 @@ dev = [
 ]
 
 [project.scripts]
+msh = "ms_toolbox.harness.main:run"
 pdf-extract = "ms_toolbox.pdf.main:main"
 tag-csv2str = "ms_toolbox.tag.main:cli_tag_csv2str"
 tag-tag2nl = "ms_toolbox.tag.main:cli_tag_tag2nl"

@@ -7,6 +7,18 @@ CONFIG_YAML: Path = user_config_path(APP_NAME, appauthor=False) / "config.yaml"
 
 DEFAULT_CONFIG_YAML = """
 tipo_worker_python_exe:
+
+harness:
+  port: 8000
+  workspace_dir:
+  api_key: sk-xx
+  url: https://openrouter.ai/api/v1/chat/completions
+  model:
+  provider:
+    order:
+      -
+    allow_fallbacks: false
+  system_prompt:
 """
 
 def get_config() -> dict:

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>MatsubaraSoda Harness</title>
+  <link rel="stylesheet" href="/style.css">
+  <script>
+      MathJax = {
+          loader: {
+              paths: {
+                  fonts: '[mathjax]',
+              },
+              load: ['[tex]/mhchem'],
+          },
+          tex: {
+              inlineMath: [['$', '$']],
+              displayMath: [['$$', '$$']],
+              packages: { '[+]': ['mhchem'] },
+          },
+          output: {
+              fontPath: '[mathjax]/mathjax-newcm-font'
+          },
+          options: {
+              enableEnrichment: false,
+              enableSpeech: false,
+              enableBraille: false,
+              enableExplorer: false,
+              menuOptions: {
+                  settings: {
+                      enrich: false,
+                      speech: false,
+                      braille: false
+                  }
+              }
+          }
+      };
+  </script>
+  <script defer src="assets/markdown-it/markdown-it.min.js"></script>
+  <script defer src="assets/markdown-it/texmath.js"></script>
+  <script defer src="assets/mathjax4/tex-chtml.js"></script>
+  <script defer src="/script.js"></script>
+</head>
+<body>
+
+  <!-- 左边栏：对话管理 -->
+  <aside id="left-sidebar" class="sidebar sidebar-left">
+    <div class="sidebar-header">
+      <strong class="sidebar-title">对话管理</strong>
+      <button class="toggle-btn" title="折叠/展开">«</button>
+    </div>
+
+    <div class="sidebar-body">
+      <button class="action-btn new-btn">+ 新建对话</button>
+      <div class="session-list"></div>
+      <button class="action-btn settings-btn">⚙ 设置</button>
+    </div>
+  </aside>
+
+  <!-- 中间：主对话区 -->
+  <main id="main-content" class="main-content">
+    <div class="message-list"></div>
+
+    <div class="chat-box">
+      <textarea class="chat-input" rows="1" placeholder="输入内容..."></textarea>
+      <button class="chat-submit">↵</button>
+    </div>
+  </main>
+
+  <!-- 右边栏：当前对话设置 -->
+  <aside id="right-sidebar" class="sidebar sidebar-right">
+    <div class="sidebar-header">
+      <button class="toggle-btn" title="折叠/展开">»</button>
+      <strong class="sidebar-title">当前对话设置</strong>
+    </div>
+
+    <fieldset class="sidebar-body config-form">
+      <div class="field">
+        <div class="field-header">
+          <span>workspace_dir</span>
+          <span class="field-error"></span>
+        </div>
+        <div class="field-row">
+          <input name="workspace_dir" type="text">
+          <button type="button" class="pick-dir-btn" title="选择文件夹">📁</button>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>model</span>
+        <input name="model" type="text">
+      </label>
+
+      <label class="field">
+        <span>provider</span>
+        <input name="provider" type="text">
+      </label>
+
+      <label class="field field-grow">
+        <span>system_prompt</span>
+        <textarea name="system_prompt"></textarea>
+      </label>
+    </fieldset>
+  </aside>
+
+</body>
+</html>
