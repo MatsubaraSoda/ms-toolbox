@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>MatsubaraSoda Harness</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/left-sidebar.css">
+  <link rel="stylesheet" href="/css/message-list.css">
+  <link rel="stylesheet" href="/css/chat-box.css">
+  <link rel="stylesheet" href="/css/right-sidebar.css">
   <script>
       MathJax = {
           loader: {
@@ -38,7 +42,7 @@
   <script defer src="assets/markdown-it/markdown-it.min.js"></script>
   <script defer src="assets/markdown-it/texmath.js"></script>
   <script defer src="assets/mathjax4/tex-chtml.js"></script>
-  <script defer src="/script.js"></script>
+  <script type="module" src="/js/main.js"></script>
 </head>
 <body>
 
@@ -46,7 +50,7 @@
   <aside id="left-sidebar" class="sidebar sidebar-left">
     <div class="sidebar-header">
       <strong class="sidebar-title">对话管理</strong>
-      <button class="toggle-btn" title="折叠/展开">«</button>
+      <button type="button" class="icon-btn toggle-btn" title="折叠/展开">«</button>
     </div>
 
     <div class="sidebar-body">
@@ -57,49 +61,93 @@
   </aside>
 
   <!-- 中间：主对话区 -->
-  <main id="main-content" class="main-content">
-    <div class="message-list"></div>
+  <main class="main-content">
+    <div id="message-list"></div>
 
-    <div class="chat-box">
-      <textarea class="chat-input" rows="1" placeholder="输入内容..."></textarea>
-      <button class="chat-submit">↵</button>
+    <div id="chat-box">
+      <div class="attachment-list"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" rows="1" placeholder="输入内容..."></textarea>
+        <input type="file" class="file-input" accept="image/*" multiple hidden>
+        <button type="button" class="chat-attach" title="添加图片">+</button>
+        <button type="button" class="chat-submit" title="发送">↵</button>
+        <button type="button" class="chat-stop" title="停止" hidden>⏹</button>
+      </div>
     </div>
   </main>
 
   <!-- 右边栏：当前对话设置 -->
   <aside id="right-sidebar" class="sidebar sidebar-right">
     <div class="sidebar-header">
-      <button class="toggle-btn" title="折叠/展开">»</button>
+      <button type="button" class="icon-btn toggle-btn" title="折叠/展开">»</button>
       <strong class="sidebar-title">当前对话设置</strong>
+      <div class="config-actions" hidden>
+        <button type="button" class="icon-btn edit-btn" title="编辑">✎</button>
+        <button type="button" class="icon-btn save-btn" title="保存" hidden>✓</button>
+        <button type="button" class="icon-btn cancel-btn" title="取消" hidden>✕</button>
+      </div>
     </div>
 
-    <fieldset class="sidebar-body config-form">
-      <div class="field">
-        <div class="field-header">
-          <span>workspace_dir</span>
-          <span class="field-error"></span>
-        </div>
-        <div class="field-row">
-          <input name="workspace_dir" type="text">
-          <button type="button" class="pick-dir-btn" title="选择文件夹">📁</button>
-        </div>
+    <div class="sidebar-body">
+      <div class="preset-actions">
+        <select class="preset-select"></select>
+        <button type="button" class="icon-btn apply-preset-btn" title="导入预设">↓</button>
+        <button type="button" class="icon-btn open-presets-btn" title="编辑 presets.yaml">⚙</button>
       </div>
 
-      <label class="field">
-        <span>model</span>
-        <input name="model" type="text">
-      </label>
+      <fieldset class="config-form">
+        <div class="field">
+          <div class="field-header">
+            <span>workspace_dir</span>
+            <span class="field-error"></span>
+          </div>
+          <div class="field-row">
+            <input name="workspace_dir" type="text">
+            <button type="button" class="icon-btn pick-dir-btn" title="选择文件夹">...</button>
+          </div>
+        </div>
 
-      <label class="field">
-        <span>provider</span>
-        <input name="provider" type="text">
-      </label>
+        <label class="field">
+          <span>model</span>
+          <input name="model" type="text">
+        </label>
 
-      <label class="field field-grow">
-        <span>system_prompt</span>
-        <textarea name="system_prompt"></textarea>
-      </label>
-    </fieldset>
+        <label class="field">
+          <span>provider</span>
+          <input name="provider" type="text">
+        </label>
+
+        <div class="field">
+          <span>tools</span>
+          <label class="checkbox-item">
+            <input type="checkbox" name="tools" value="base">
+            base
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="tools" value="run_command">
+            run_command
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="tools" value="web">
+            web
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="tools" value="image">
+            image
+          </label>
+        </div>
+
+        <label class="field field-grow">
+          <span>system_prompt</span>
+          <textarea name="system_prompt"></textarea>
+        </label>
+      </fieldset>
+
+      <div class="container-actions">
+        <button type="button" class="start-container-btn">start_container</button>
+        <button type="button" class="stop-container-btn">stop_container</button>
+      </div>
+    </div>
   </aside>
 
 </body>

@@ -1,0 +1,130 @@
+#right-sidebar {
+  .config-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+  }
+
+  .preset-actions {
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .preset-select {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    border-right: 12px solid transparent;
+    outline: 1px solid #999;
+    outline-offset: -1px;
+    padding: 6px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.95em;
+    box-sizing: border-box;
+  }
+
+  .preset-select:disabled {
+    opacity: 0.5;
+  }
+
+  .config-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border: none;
+    margin: 0;
+    padding: 12px;
+    gap: 12px;
+    overflow-y: auto;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .field-grow {
+    flex: 1;
+  }
+
+  .field span {
+    font-size: 0.9em;
+    font-weight: bold;
+  }
+
+  .field input[type="text"],
+  .field textarea {
+    border: 1px solid #999;
+    padding: 6px;
+    font-family: inherit;
+    font-size: 0.95em;
+    box-sizing: border-box;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95em;
+  }
+
+  .field textarea {
+    flex: 1;
+    resize: none;
+    line-height: 1.5;
+  }
+
+  .field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .field .field-error {
+    color: #d00;
+    font-weight: normal;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 4px;
+  }
+
+  .field-row input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pick-dir-btn,
+  .preset-actions .icon-btn {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .container-actions {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid #eee;
+  }
+
+  .container-actions button {
+    flex: 1;
+    padding: 8px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #999;
+    font-family: inherit;
+  }
+
+  .container-actions button:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}

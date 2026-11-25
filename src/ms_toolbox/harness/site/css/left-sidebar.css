@@ -1,0 +1,102 @@
+#left-sidebar {
+  .sidebar-header {
+    justify-content: space-between;
+  }
+
+  .action-btn {
+    margin: 10px 12px;
+    padding: 8px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #999;
+    font-family: inherit;
+  }
+
+  .session-list {
+    flex: 1;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+  }
+
+  .session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 0.9em;
+  }
+
+  .session-item:hover {
+    background: #f9f9f9;
+  }
+
+  .session-item.active {
+    background: #eaeaea;
+  }
+
+  .session-item.active .session-title {
+    font-weight: bold;
+  }
+
+  .session-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .session-menu {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .session-menu-btn {
+    list-style: none;
+  }
+
+  .session-menu-btn::-webkit-details-marker {
+    display: none;
+  }
+
+  .session-menu-popup {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 2px);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    min-width: 5em;
+    background: #fff;
+    border: 1px solid #999;
+  }
+
+  .session-menu-popup button {
+    padding: 6px 10px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.95em;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .session-menu-popup button:last-child {
+    border-bottom: none;
+  }
+
+  .session-menu-popup button:hover:not(:disabled) {
+    background: #f2f2f2;
+  }
+
+  .session-menu-popup button:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}

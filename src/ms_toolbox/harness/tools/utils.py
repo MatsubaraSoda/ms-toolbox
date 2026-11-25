@@ -1,21 +1,32 @@
-from docstring_parser import parse
-import mimetypes
 import base64
+from io import BytesIO
+
+from docstring_parser import parse
+from PIL import Image
+
+
+class ToolResult:
+    """统一封装工具执行结果：基础文本、前端 <details> 附加内容、借道 user 的多模态内容"""
+
+    def __init__(self, result: str, details_extra=None, pending_user_content: list = None):
+        self.result = result
+        self.details_extra = details_extra
+        self.pending_user_content = pending_user_content or []
+
 
 def convert_image_file_to_base64_data_url(image_file_path: str) -> str:
-    """将图片转换为 Base64"""
-    mime_type, _ = mimetypes.guess_type(image_file_path)
-    if not mime_type:
-        mime_type = "image/jpeg"
+    """将图片等比压缩并转换为 WebP 格式的 Base64 Data URL"""
+    with Image.open(image_file_path) as img:
+        img.thumbnail((1568, 1568))
+        buffer = BytesIO()
+        img.save(buffer, format="WEBP")
 
-    with open(image_file_path, "rb") as image_file:
-        b64 = base64.b64encode(image_file.read()).decode("utf-8")
-
-    return f"data:{mime_type};base64,{b64}"
+    b64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    return f"data:image/webp;base64,{b64}"
 
 def to_image_url(image_source: str) -> str:
     """将图片转换为 `chat/completions` 要求的 `image_url` 格式"""
-    if image_source.startswith(("http://", "https://", "data:")):
+    if image_source.startswith(("http://", "https://")):
         return image_source
     return convert_image_file_to_base64_data_url(image_source)
 
