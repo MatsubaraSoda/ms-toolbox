@@ -2,8 +2,24 @@ import subprocess
 import uuid
 from pathlib import Path
 
+MAX_OUTPUT_CHARS = 10000
+
 # 记录当前已经启动了 Docker 容器的 session_id
 active_containers: set[str] = set()
+
+
+def truncate_output(text: str, max_chars: int = MAX_OUTPUT_CHARS) -> str:
+    if len(text) <= max_chars:
+        return text
+
+    head_chars = max_chars // 2
+    tail_chars = max_chars - head_chars
+    omitted_chars = len(text) - max_chars
+    return (
+        f"{text[:head_chars]}\n"
+        f"... [中间已省略 {omitted_chars} 个字符，如需查看特定内容请使用 grep / head / tail 等命令过滤] ...\n"
+        f"{text[-tail_chars:]}"
+    )
 
 
 def start_container(session_id: str, workspace_dir: str, docker_image: str) -> str | None:
@@ -71,19 +87,21 @@ def exec_in_container(
         "sh", "-c", command,
     ]
     result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    stdout = truncate_output(result.stdout)
+    stderr = truncate_output(result.stderr)
 
     if result.returncode == 124:
         return (
             f"error: 命令执行超时（超过 {timeout} 秒已被终止）。"
             f"耗时任务可调大 timeout，常驻服务请设置 background=True。\n"
-            f"stdout:\n{result.stdout}"
-            f"stderr:\n{result.stderr}"
+            f"stdout:\n{stdout}"
+            f"stderr:\n{stderr}"
         )
 
     return (
         f"exit_code: {result.returncode}\n"
-        f"stdout:\n{result.stdout}"
-        f"stderr:\n{result.stderr}"
+        f"stdout:\n{stdout}"
+        f"stderr:\n{stderr}"
     )
 
 
