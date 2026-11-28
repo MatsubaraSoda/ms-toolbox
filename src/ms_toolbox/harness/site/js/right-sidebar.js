@@ -7,14 +7,15 @@ const cancelBtn = configActions.querySelector('.cancel-btn');
 const presetSelect = rightSidebar.querySelector('.preset-select');
 const applyPresetBtn = rightSidebar.querySelector('.apply-preset-btn');
 const openPresetsBtn = rightSidebar.querySelector('.open-presets-btn');
+const dockerImageInput = rightSidebar.querySelector('[name="docker_image"]');
+const startContainerBtn = rightSidebar.querySelector('.start-container-btn');
+const stopContainerBtn = rightSidebar.querySelector('.stop-container-btn');
 const configForm = rightSidebar.querySelector('.config-form');
 const workspaceInput = configForm.querySelector('[name="workspace_dir"]');
 const workspaceError = configForm.querySelector('.field-error');
 const pickDirBtn = configForm.querySelector('.pick-dir-btn');
-const startContainerBtn = rightSidebar.querySelector('.start-container-btn');
-const stopContainerBtn = rightSidebar.querySelector('.stop-container-btn');
 
-const CONFIG_KEYS = ['workspace_dir', 'model', 'provider', 'system_prompt'];
+const CONFIG_KEYS = ['docker_image', 'workspace_dir', 'model', 'provider', 'system_prompt'];
 
 let presets = [];
 let hasSession = false;
@@ -24,7 +25,7 @@ let savedConfig = null;
 
 function fillConfig(cfg) {
   for (const key of CONFIG_KEYS) {
-    configForm.querySelector(`[name="${key}"]`).value = cfg[key];
+    rightSidebar.querySelector(`[name="${key}"]`).value = cfg[key] ?? '';
   }
   for (const box of configForm.querySelectorAll('input[name="tools"]')) {
     box.checked = cfg.tools.includes(box.value);
@@ -36,6 +37,7 @@ function syncConfigUI() {
   configForm.disabled = formDisabled;
   presetSelect.disabled = formDisabled;
   applyPresetBtn.disabled = formDisabled;
+  dockerImageInput.disabled = formDisabled;
 
   configActions.hidden = !hasSession;
   editBtn.hidden = isEditing;
@@ -153,7 +155,7 @@ export function setConfigRunning(running) {
 export function readConfig() {
   const cfg = {};
   for (const key of CONFIG_KEYS) {
-    cfg[key] = configForm.querySelector(`[name="${key}"]`).value;
+    cfg[key] = rightSidebar.querySelector(`[name="${key}"]`).value;
   }
   const checkedBoxes = configForm.querySelectorAll('input[name="tools"]:checked');
   cfg.tools = Array.from(checkedBoxes, (box) => box.value);

@@ -6,9 +6,13 @@ from pathlib import Path
 active_containers: set[str] = set()
 
 
-def start_container(session_id: str, workspace_dir: str):
+def start_container(session_id: str, workspace_dir: str, docker_image: str) -> str | None:
     if session_id in active_containers:
-        return
+        return None
+
+    image = docker_image.strip()
+    if not image:
+        return "error: 未配置 docker_image，请在 config.yaml 或右侧对话设置中填写 Docker 镜像名称。"
 
     container_name = f"msh-{session_id}"
     abs_workspace = Path(workspace_dir).resolve()
@@ -19,12 +23,23 @@ def start_container(session_id: str, workspace_dir: str):
         "--name", container_name,
         "-v", f"{abs_workspace}:/workspace",
         "-w", "/workspace",
-        "python:3.12-slim",
+        image,
         "sleep", "infinity",
     ]
-    subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+    except FileNotFoundError:
+        return "error: 未找到 docker 命令，请确认本机已安装 Docker。"
+
+    if result.returncode != 0:
+        return (
+            f"error: 启动 Docker 容器失败（请确认 Docker 服务已启动且镜像 '{image}' 有效）。\n"
+            f"stderr:\n{result.stderr}"
+        )
+
     active_containers.add(session_id)
-    print(f"[Docker] 已启动容器: {container_name}")
+    print(f"[Docker] 已启动容器: {container_name} ({image})")
+    return None
 
 
 def exec_in_container(
@@ -89,9 +104,9 @@ def stop_all_containers():
         stop_container(session_id)
 
 
-def create_run_command_tool(session_id: str, workspace_dir: str):
+def create_run_command_tool(session_id: str, workspace_dir: str, docker_image: str):
     def run_command(command: str, timeout: int = 30, background: bool = False) -> str:
-        """在当前工作区对应的 Linux (python:3.12-slim) 容器中执行 Shell 命令。
+        """在当前工作区对应的 Linux 容器中执行 Shell 命令。
 
         Args:
             command (str): 要执行的 Shell 命令（例如 "ls -la" 或 "python3 main.py"）。
@@ -99,7 +114,9 @@ def create_run_command_tool(session_id: str, workspace_dir: str):
             background (bool, optional): 是否在后台常驻运行，默认为 False。启动 Web 服务等不会主动退出的命令时设为 True。
         """
         if session_id not in active_containers:
-            start_container(session_id, workspace_dir)
+            err = start_container(session_id, workspace_dir, docker_image)
+            if err:
+                return err
 
         return exec_in_container(session_id, command, timeout, background)
 

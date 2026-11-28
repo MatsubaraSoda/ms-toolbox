@@ -28,6 +28,7 @@ msh --port 8080
 port: 8000                                # 默认监听端口（可通过命令行 --port 覆盖）
 max_steps: 5                              # 单次最大循环步数（留空默认 5，设为 0 则无限循环）
 stream: true                              # 是否启用流式输出（启动时读取一次，留空默认 true；设为 false 则等待完整响应后一次性渲染）
+docker_image: nikolaik/python-nodejs:python3.12-nodejs26  # 默认 Docker 沙箱容器镜像
 workspace_dir: D:/path/to/your/project    # 默认工作区目录（可在新建或编辑会话时通过网页修改或弹窗选择）
 api_key: sk-or-v1-xxx                     # API Key
 url: https://openrouter.ai/api/v1/chat/completions
@@ -60,7 +61,7 @@ system_prompt: '你是一位助手...'           # 新建会话的默认 System 
 - **多模态图片交互（输入 / 生图 / 看图）**：支持选择本地图片或直接从剪贴板粘贴截图发送（自动压缩编码并落盘至当前会话 `assets/` 目录回显），同时内置生图预览与按需读取图片供模型查看的多模态工具链。
 - **双轨状态与完整留痕**：所有会话保存在 `harness/sessions/{时间戳}_{uuid}/` 目录下，分离维护发给模型的 `request_body.json` 与供前端渲染的 `ui_messages.json`，并按序落盘每次原始请求与响应的 `http_logs/` 及异常堆栈 `error.txt`，方便排查接口细节。
 - **对话控制（停止 / 继续 / 回溯）**：运行期间支持点击 `⏹` 随时中断，遇到手动停止、达到最大步数（`max_steps`）或请求报错时统一生成提示框支持一键继续/重试；每轮 `user` 消息通过 `request_index` 锚点精确关联双轨历史，支持点击标题栏右侧 `↩` 按钮一键撤销指定轮次及之后的全部对话，并将原文本自动回填至输入框重新编辑发送。
-- **工作区与容器沙箱**：文件操作工具严格限制在当前会话的 `workspace_dir` 内，自动拦截越界路径访问并返回相对路径提示；命令行工具运行在按会话隔离的 `python:3.12-slim` Docker 容器中，支持前端手动启停并在服务退出时自动清理。
+- **工作区与容器沙箱**：文件操作工具严格限制在当前会话的 `workspace_dir` 内，自动拦截越界路径访问并返回相对路径提示；命令行工具运行在按会话隔离的自定义 Docker 容器（由 `docker_image` 指定）中，支持前端手动启停并在服务退出时自动清理。
 
 ## 内置工具
 
@@ -72,13 +73,13 @@ system_prompt: '你是一位助手...'           # 新建会话的默认 System 
 | `base` | `read_file` | 读取指定文件的完整文本内容 |
 | `base` | `write_file` | 创建新文件或覆盖写入完整文件内容 |
 | `base` | `edit_file` | 通过精确匹配 `old_str` 并替换为 `new_str` 对文件做局部修改 |
-| `run_command` | `run_command` | 在挂载当前工作区的 `python:3.12-slim` Docker 容器中执行 Shell 命令（首次调用自动启动容器，支持自定义超时时间与后台常驻运行） |
+| `run_command` | `run_command` | 在挂载当前工作区的 Docker 容器（镜像由 `docker_image` 配置）中执行 Shell 命令（首次调用自动启动容器，支持自定义超时时间与后台常驻运行） |
 | `web` | `web_search` | 在互联网上搜索关键词，返回相关网页的标题、链接与摘要（JSON 数组格式） |
 | `web` | `web_fetch` | 提取指定 URL 网页的正文内容（Markdown 格式） |
 | `image` | `generate_image` | 调用生图模型生成图片并落盘至当前会话 `assets/`，在前端直接展开预览 |
 | `image` | `view_image` | 按需读取会话 `assets/` 或工作区内的图片，借道 `user` 消息回传给主 Agent 查看 |
 
-> 环境前提：启用 `run_command` 需本机安装并运行 Docker。当前沙箱容器镜像固定写死为 `python:3.12-slim`，首次使用前建议先执行 `docker pull python:3.12-slim` 预拉取镜像，避免首次调用工具时因下载镜像导致超时。
+> 环境前提：启用 `run_command` 需本机安装并运行 Docker，并在配置中填写 `docker_image`（例如 `nikolaik/python-nodejs:python3.12-nodejs26`）。首次使用前建议先执行 `docker pull <镜像名>` 预拉取镜像，避免首次调用工具时因下载镜像导致超时。
 
 ## 源码导读
 

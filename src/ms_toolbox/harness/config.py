@@ -13,6 +13,7 @@ DEFAULT_HARNESS_CONFIG_YAML = """
 port: 8000
 max_steps: 5
 stream: true
+docker_image:
 workspace_dir:
 api_key: sk-xx
 url: https://openrouter.ai/api/v1/chat/completions
@@ -25,7 +26,7 @@ web_api_key:
 system_prompt:
 """
 
-TEXT_KEYS = ["workspace_dir", "model", "provider", "system_prompt"]
+TEXT_KEYS = ["docker_image", "workspace_dir", "model", "provider", "system_prompt"]
 
 
 def get_harness_config() -> dict:

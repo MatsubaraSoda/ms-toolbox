@@ -18,7 +18,7 @@ Harness 不要求工具继承特定基类。所有工具均为普通的同步 Py
 
 ```python
 def run_command(command: str, timeout: int = 30, background: bool = False) -> str:
-    """在当前工作区对应的 Linux (python:3.12-slim) 容器中执行 Shell 命令。
+    """在当前工作区对应的 Linux 容器中执行 Shell 命令。
 
     Args:
         command (str): 要执行的 Shell 命令（例如 "ls -la" 或 "python3 main.py"）。

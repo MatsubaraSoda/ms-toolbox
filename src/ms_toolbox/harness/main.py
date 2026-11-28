@@ -189,12 +189,12 @@ async def ws_handler(websocket):
                 cfg["workspace_dir"] = workspace_dir
                 session = Session.load(session_id)
                 old_workspace = session.workspace_dir
+                old_image = session.docker_image
                 session.update_config(cfg)
 
-                if (
-                    Path(old_workspace).resolve() != Path(workspace_dir).resolve()
-                    and session_id in active_containers
-                ):
+                workspace_changed = Path(old_workspace).resolve() != Path(workspace_dir).resolve()
+                image_changed = old_image.strip() != session.docker_image.strip()
+                if (workspace_changed or image_changed) and session_id in active_containers:
                     await asyncio.to_thread(stop_container, session_id)
                     await send_container_state()
 
@@ -282,7 +282,11 @@ async def ws_handler(websocket):
             elif msg_type == "start_container":
                 session_id = data["session_id"]
                 session = Session.load(session_id)
-                await asyncio.to_thread(start_container, session_id, session.workspace_dir)
+                err = await asyncio.to_thread(
+                    start_container, session_id, session.workspace_dir, session.docker_image
+                )
+                if err:
+                    print(f"[Docker] {err}")
                 await send_container_state()
 
             elif msg_type == "stop_container":

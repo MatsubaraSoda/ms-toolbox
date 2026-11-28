@@ -42,6 +42,7 @@ class Session:
         self.request_body = request_body
         self.ui_messages = ui_messages
         self.workspace_dir = ui_messages["config"]["workspace_dir"]
+        self.docker_image = ui_messages["config"].get("docker_image", "")
         self.tool_map = {}
 
     def prepare_request_body(self):
@@ -59,7 +60,9 @@ class Session:
                     "allow_fallbacks": False,
                 }
 
-        tools, self.tool_map = build_tools(cfg["tools"], self.id, self.workspace_dir)
+        tools, self.tool_map = build_tools(
+            cfg["tools"], self.id, self.workspace_dir, self.docker_image
+        )
         if tools:
             body["tools"] = tools
 
@@ -71,6 +74,7 @@ class Session:
         self.ui_messages["config"] = cfg
         self.ui_messages["messages"][0]["content"] = cfg["system_prompt"]
         self.workspace_dir = cfg["workspace_dir"]
+        self.docker_image = cfg.get("docker_image", "")
         self.prepare_request_body()
         self.save_state()
 

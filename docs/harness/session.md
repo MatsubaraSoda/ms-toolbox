@@ -35,6 +35,7 @@
 {
   "title": "11-17 20:51 · 07f55bc3",
   "config": {
+    "docker_image": "nikolaik/python-nodejs:python3.12-nodejs26",
     "workspace_dir": "D:/path/to/project",
     "model": "google/gemini-4-carbon",
     "provider": "google-ai-studio/flex",

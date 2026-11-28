@@ -127,7 +127,7 @@ def create_base_tools(workspace_dir: str) -> list:
         p, rel_path = resolved
 
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(content, encoding="utf-8")
+        p.write_text(content, encoding="utf-8", newline="\n")
         return f"文件 '{rel_path}' 写入成功。"
 
     def edit_file(path: str, old_str: str, new_str: str) -> str:
@@ -159,7 +159,7 @@ def create_base_tools(workspace_dir: str) -> list:
             return f"错误：old_str 在文件中出现了 {count} 次，无法确定改哪一个。请补充前后几行代码作为上下文，使其唯一。"
 
         new_content = content.replace(old_str, new_str, 1)
-        p.write_text(new_content, encoding="utf-8")
+        p.write_text(new_content, encoding="utf-8", newline="\n")
         return f"文件 '{rel_path}' 修改成功。"
 
     return [list_files, read_file, write_file, edit_file]

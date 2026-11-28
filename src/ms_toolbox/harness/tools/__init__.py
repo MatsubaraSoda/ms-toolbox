@@ -5,13 +5,18 @@ from ms_toolbox.harness.tools.utils import function_to_tool
 from ms_toolbox.harness.tools.web import create_web_tools
 
 
-def build_tools(tool_names: list[str], session_id: str, workspace_dir: str) -> tuple[list[dict], dict]:
+def build_tools(
+    tool_names: list[str],
+    session_id: str,
+    workspace_dir: str,
+    docker_image: str = "",
+) -> tuple[list[dict], dict]:
     funcs = []
     for name in tool_names:
         if name == "base":
             funcs.extend(create_base_tools(workspace_dir))
         elif name == "run_command":
-            funcs.append(create_run_command_tool(session_id, workspace_dir))
+            funcs.append(create_run_command_tool(session_id, workspace_dir, docker_image))
         elif name == "web":
             funcs.extend(create_web_tools())
         elif name == "image":

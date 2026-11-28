@@ -89,10 +89,24 @@
     </div>
 
     <div class="sidebar-body">
-      <div class="preset-actions">
-        <select class="preset-select"></select>
-        <button type="button" class="icon-btn apply-preset-btn" title="导入预设">↓</button>
-        <button type="button" class="icon-btn open-presets-btn" title="编辑 presets.yaml">⚙</button>
+      <div class="extra-config">
+        <div class="field">
+          <span>preset</span>
+          <div class="field-row">
+            <select class="preset-select"></select>
+            <button type="button" class="icon-btn apply-preset-btn" title="导入预设">↓</button>
+            <button type="button" class="icon-btn open-presets-btn" title="编辑 presets.yaml">⚙</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span>docker_image</span>
+          <div class="field-row">
+            <input name="docker_image" type="text">
+            <button type="button" class="icon-btn start-container-btn" title="start_container">▶</button>
+            <button type="button" class="icon-btn stop-container-btn" title="stop_container">■</button>
+          </div>
+        </div>
       </div>
 
       <fieldset class="config-form">
@@ -142,11 +156,6 @@
           <textarea name="system_prompt"></textarea>
         </label>
       </fieldset>
-
-      <div class="container-actions">
-        <button type="button" class="start-container-btn">start_container</button>
-        <button type="button" class="stop-container-btn">stop_container</button>
-      </div>
     </div>
   </aside>
 

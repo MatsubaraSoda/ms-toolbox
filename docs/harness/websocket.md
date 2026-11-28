@@ -53,7 +53,7 @@
 | `submit_chat` | 在输入框发送消息（含文本或图片附件） | `session_id`, `content`, `files`, `config`（仅新会话首条携带） | 新会话首条先回 `session_loaded`（校验失败回 `workspace_error`），随后推送 `running_state`、`stream_delta`、`messages` |
 | `stop_chat` | 运行中点击 `⏹` 停止按钮 | `session_id` | 取消后台任务，触发 `messages` 与 `running_state` |
 | `continue_chat` | 点击中断提示框的「继续执行 / 点击重试」 | `session_id` | 推送 `running_state`、`stream_delta`、`messages` |
-| `update_config` | 右侧边栏编辑当前会话配置后点击保存 | `session_id`, `config` | `config_updated`（目录不存在回 `workspace_error`；目录变更且容器已启动时额外推送 `container_state`） |
+| `update_config` | 右侧边栏编辑当前会话配置后点击保存 | `session_id`, `config` | `config_updated`（目录不存在回 `workspace_error`；工作区目录或 `docker_image` 变更且容器已启动时额外推送 `container_state`） |
 | `pick_dir` | 右侧边栏点击 `...` 选择工作区文件夹 | 无 | 选中目录后回 `dir_picked`（取消弹窗则无返回） |
 | `open_settings` | 点击左侧底部 `⚙ 设置` 打开 `config.yaml` | 无 | 无（直接调用系统默认编辑器） |
 | `open_presets` | 点击右侧预设栏 `⚙` 打开 `presets.yaml` | 无 | 无（直接调用系统默认编辑器） |
@@ -88,5 +88,5 @@
 | `messages` | 广播 | 会话消息快照更新时（用户提问入列、模型响应完成、工具调用完成、任务中断等） | `session_id`, `data`（UI 消息列表）, `sessions`, `active_containers` |
 | `stream_delta` | 广播 | 流式输出期间，每收到一段思考或正文增量时 | `session_id`, `block_type`（`"thought"` \| `"text"`）, `delta` |
 | `running_state` | 广播 | 后台会话任务启动或结束时 | `running_sessions` |
-| `container_state` | 广播 | 容器手动启停，或修改工作区目录导致旧容器停止时 | `active_containers` |
+| `container_state` | 广播 | 容器手动启停，或修改工作区目录 / `docker_image` 导致旧容器停止时 | `active_containers` |
 | `workspace_error` | 单发 | 新会话首条 `submit_chat` 或 `update_config` 校验工作区目录不存在时 | `message` |

@@ -5,10 +5,11 @@
     gap: 4px;
   }
 
-  .preset-actions {
+  .extra-config {
     display: flex;
-    gap: 4px;
-    padding: 10px 12px;
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
     border-bottom: 1px solid #eee;
   }
 
@@ -100,31 +101,9 @@
     min-width: 0;
   }
 
-  .pick-dir-btn,
-  .preset-actions .icon-btn {
+  .field-row .icon-btn {
     width: auto;
     height: auto;
     aspect-ratio: 1;
-  }
-
-  .container-actions {
-    display: flex;
-    gap: 8px;
-    padding: 10px 12px;
-    border-top: 1px solid #eee;
-  }
-
-  .container-actions button {
-    flex: 1;
-    padding: 8px;
-    cursor: pointer;
-    background: #fff;
-    border: 1px solid #999;
-    font-family: inherit;
-  }
-
-  .container-actions button:disabled {
-    cursor: default;
-    opacity: 0.5;
   }
 }
