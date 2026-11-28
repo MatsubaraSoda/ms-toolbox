@@ -1,22 +1,44 @@
 # Tag 工具
 
-与 ComfyUI 生图提示词（Danbooru Tags）处理相关的命令行工具。
+与 ComfyUI 生图提示词（Danbooru Tags）生成与扩写相关的 Python 工具库（`ms_toolbox.tag`）。
 
-## tag-csv2str — 读取标签树 CSV，生成所有可能的标签组合
+## 快速上手
 
-```bash
-tag-csv2str -i test_tags.csv
+```python
+from ms_toolbox.tag import TipoRequest, csv2tag, tag2nl
+
+# 1. 读取标签树 CSV，展开所有标签组合 -> list[str]
+tag_list = csv2tag("tags.csv")
+
+# 2. 调用本地 TIPO 模型扩写提示词 -> list[str]
+requests = [TipoRequest(tags=t) for t in tag_list]
+prompts = tag2nl(requests)
+
+for p in prompts:
+    print(p)
 ```
 
-输入格式见 [`tests/tag/test_data/test_tags.csv`](../tests/tag/test_data/test_tags.csv)。从 `<root>` 开始递归遍历标签树（邻接表存储，深度优先展开）生成所有可能的标签组合；`<root>` 和带 `<hidden>` 前缀的节点仅用于组织树结构，不会进入最终组合。结果逐行输出到 stdout。
+---
 
-| 参数 | 必填 | 说明 |
-| --- | --- | --- |
-| `-i`, `--input` | 是 | 输入标签树 CSV 文件路径 |
+## `csv2tag` — CSV 标签树编写规则
 
-退出码：`0` 成功；`2` 意外错误（如 CSV 文件不存在）。状态信息输出到 stderr，组合结果输出到 stdout。
+`csv2tag(csv_file_path)` 基于**列式邻接表**从 `<root>` 开始深度优先展开所有标签组合，返回 `list[str]`。
 
-输入示例（CSV FILE/test_tags.csv）：
+### 1. 结构与逻辑规则（OR 与 AND）
+- **列代表节点与 OR 分支**：CSV 的每一列表示一个父节点及其子分支。
+  - **第 1 行（表头）**：父节点名，整个表必须包含 `<root>` 列作为遍历入口。
+  - **第 2 行起**：该父节点的**或（OR）**可选分支（空单元格自动忽略；重复填写同一分支可提高其出现频次/权重）。
+- **单元格内逗号代表 AND 组合**：单个单元格内可用英文逗号 `,` 连接多个子标签（如 `"<hidden>审查, 1girl, <hidden>发型"`），程序会依次递归展开每个子标签并做笛卡尔积拼接。
+- **普通节点保留自身**：未在表头定义的标签作为叶子节点直接输出；在表头有定义的普通标签（如 `long_hair`）会保留自身，并在其后追加子分支标签（如 `long_hair, ponytail`）。
+
+### 2. 控制节点（`<root>` 与 `<hidden>`）
+以 `<root>` 或 `<hidden>` 开头的节点**不会进入最终输出字符串**，仅用于组织树结构：
+- **分类节点**（如 `<hidden>审查`、`<hidden>发型`）：写在表头，用于逻辑分组与分流。
+- **空分支**（单独的 `<hidden>`）：作为叶子节点时结算为空，表示“跳过/不附加该子特征”。
+
+### 3. 最小示例
+
+输入 `tags.csv`：
 
 ```csv
 <root>,<hidden>审查,<hidden>发型,long_hair
@@ -25,24 +47,46 @@ tag-csv2str -i test_tags.csv
 ,,long_hair,
 ```
 
-```powershell
-## -i flag
-tag-csv2str -i test_tags.csv | Out-File -FilePath output.jsonl -Encoding utf8
+`csv2tag("tags.csv")` 返回值：
+
+```python
+[
+    "safe, 1girl, short_hair",
+    "safe, 1girl, short_hair",
+    "safe, 1girl, long_hair, ponytail",
+    "safe, 1girl, long_hair",
+]
 ```
 
-输出示例（JSON）：
+---
 
-```jsonl
-{"tag_string": "safe, 1girl, short_hair"}
-{"tag_string": "safe, 1girl, short_hair"}
-{"tag_string": "safe, 1girl, long_hair, ponytail"}
-{"tag_string": "safe, 1girl, long_hair"}
+## `tag2nl` — 用 TIPO 扩写提示词
 
+`tag2nl(request: list[TipoRequest]) -> list[str]` 将每条标签请求交给本地 [TIPO](https://huggingface.co/KBlueLeaf/TIPO-500M-ft) 模型扩写，按 1:1 顺序返回扩写后的提示词字符串列表。
+
+### 请求参数（`TipoRequest`）
+
+除 `tags` 必填外，其余参数均有默认值，可按需覆盖：
+
+```python
+TipoRequest(
+    tags="safe, 1girl, long_hair",
+    nl_prompt="",
+    black_list="",
+    output_format="Both, tag first (recommend)",  # 可选见 tipo_meta.py 中的 DEFAULT_FORMAT
+    target_length="long",
+    temp=0.5,
+    top_p=0.95,
+    min_p=0.05,
+    top_k=60,
+    seed=20090220,
+    escape_brackets=False,
+)
 ```
 
-## tag-tag2nl — 用 TIPO 扩写 tag_string
+### Worker 环境配置
 
-把每组 Danbooru tags 交给 [TIPO](https://huggingface.co/KBlueLeaf/TIPO-500M-ft) 扩写，每组 tags 的扩写结果作为单行字符串输出到 stdout。运行前需在配置文件 `%LOCALAPPDATA%\ms-toolbox\config.yaml` 中指定 `tipo_worker_python_exe`，指向已装好下列依赖的解释器（版本为实测可用版本，不随本项目安装）：
+运行 `tag2nl` 前，需在 `%LOCALAPPDATA%\ms-toolbox\config.yaml` 中指定 `tipo_worker_python_exe`，指向已安装下列依赖的独立 Python（Windows + Conda + CUDA）解释器：
 
 | 库 | 版本 | 说明 |
 | --- | --- | --- |
@@ -53,39 +97,3 @@ tag-csv2str -i test_tags.csv | Out-File -FilePath output.jsonl -Encoding utf8
 | `tiktoken` | 0.14.0 | 解析失败时的兜底 |
 | `torch` | 2.6.0+cu124 | CUDA 推理依赖 |
 | `huggingface_hub` | 1.31.0 | 读取本地模型缓存 |
-
-| 参数 | 必填 | 说明 |
-| --- | --- | --- |
-| `-t`, `--tags` | 否；不填时走 stdin | 一个或多个 tag_string。 |
-
-退出码：`0` 成功；`2` 意外错误。
-
-输入示例（JSONL / input.jsonl）：
-
-```jsonl
-{"tag_string": "safe, 1girl, short_hair"}
-{"tag_string": "safe, 1girl, short_hair"}
-{"tag_string": "safe, 1girl, long_hair, ponytail"}
-{"tag_string": "safe, 1girl, long_hair"}
-
-```
-
-```powershell
-## -t flag
-tag-tag2nl -t "safe, 1girl, short_hair" "safe, 1girl, short_hair" "safe, 1girl, long_hair, ponytail" "safe, 1girl, long_hair"
-
-## stdin
-Get-Content input.jsonl -Raw | tag-tag2nl | Out-File -FilePath output.jsonl -Encoding utf8
-
-## 输出均为 stdout jsonl
-```
-
-输出示例（JSONL / output.jsonl）：
-
-```txt
-{"prompt": "1girl, \n\nshort hair, simple background, hair between eyes, fangs, open mouth, looking at viewer, frills, bow, bat wings, red eyes, solo, center frills, blush, grey hair, bowtie, wrist cuffs, shirt, outstretched arms, :d, full body, no headwear, black dress, red bow, white background, smile, white shirt, short sleeves, wings, red bowtie, blush stickers, dress, puffy sleeves, standing, petticoat, red footwear, standing on one leg, puffy short sleeves,\n\na charming illustration by the artist cato (monocatienus), known for their whimsical and detailed style. The central figure is Remilia Scarlet, depicted in a full-body shot with her arms outstretched as if welcoming the viewer into her world. She is dressed in an elegant black dress adorned with frills and puffy short sleeves, complemented by red footwear that matches her eyes. The background is simple and white, allowing Remilia to stand out prominently.\n\nsafe"}
-{"prompt": "1girl, \n\nshort hair, blush, short sleeves, bow, looking at viewer, fangs, no headwear, simple background, puffy sleeves, red footwear, full body, wings, frills, standing on one leg, white shirt, red bowtie, grey hair, center frills, solo, white background, wrist cuffs, red eyes, open mouth, dress, petticoat, standing, :d, outstretched arms, red bow, blush stickers, smile, puffy short sleeves, bowtie, hair between eyes, black dress, bat wings, shirt,\n\na character from the Touhou series, illustrated in the distinctive style of artist kame (kamepan44231). The central figure is Remilia Scarlet, depicted with her signature pale skin and striking red eyes. She has short, light purple hair and wears a black dress adorned with white ruffles at the hem. Her most notable feature is the pair of bat-like wings that extend from her back, adding an ethereal quality to her appearance.\n\nsafe"}
-{"prompt": "1girl, \n\nlong hair, ponytail, bow, solo, hand up, white socks, blue bowtie, white apron, looking at viewer, blue eyes, apron, socks, open mouth, blue dress, frills, dress, black footwear, frilled apron, short sleeves, blue bow, puffy short sleeves, white headwear, grey hair, standing on one leg, very long hair, blush stickers, wrist cuffs, white background, bowtie, standing, shoes, puffy sleeves, maid headdress, hat, simple background, full body,\n\na charming illustration by the artist saijo1201, known for their whimsical and detailed style. The central figure is a young girl with long, flowing silver hair adorned with blue ribbons. She wears a white apron over her dress and has striking black shoes with bows on them. Her eyes are large and expressive, adding to the overall cuteness of the image.\n\nsafe"}
-{"prompt": "1girl, \n\nlong hair, tail ornament, blush, thighhighs, purple eyes, tail raised, closed mouth, very long hair, shirt, frilled skirt, black shirt, breasts, skirt, sleeveless shirt, tail bow, looking at viewer, bow, animal ears, hand up, blue bow, cat girl, hairband, sleeveless, white background, bare shoulders, small breasts, cat ears, pleated skirt, white hair, wrist cuffs, purple skirt, grey thighhighs, frills, simple background, black hairband, animal ear fluff, cat tail, solo,\n\nA young girl with long white hair and purple eyes. she is wearing a black dress with a blue ribbon tied around her waist and a pair of cat ears on her head. the background is white, making the girl and her outfit stand out. the overall style of the illustration is anime-inspired.\n\nsafe"}
-
-```

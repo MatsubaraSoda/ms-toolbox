@@ -50,7 +50,7 @@ def _traverse(adj: dict[str, list[str]], tag: str) -> list[list[str]]:
     else:
         return [[tag] + res for res in result]
 
-def tag_csv2str(csv_file_path: Path) -> list[str]:
+def csv2tag(csv_file_path: Path | str) -> list[str]:
     # 读取 CSV 文件
     with open(csv_file_path, "r", encoding="utf-8") as f:
         rows = list(csv.reader(f))
@@ -106,7 +106,7 @@ def _get_worker_env(python_exe: Path) -> dict[str, str]:
         "PYTHONUTF8": "1",
     }
 
-def tag_tag2nl(request: list[TipoRequest]) -> list[str]:
+def tag2nl(request: list[TipoRequest]) -> list[str]:
     python_exe = Path(get_config()["tipo_worker_python_exe"])
     env = _get_worker_env(python_exe)
 
@@ -124,4 +124,8 @@ def tag_tag2nl(request: list[TipoRequest]) -> list[str]:
         check=True,             # 替代 returncode
     )
 
-    return result.stdout
+    return [
+        json.loads(line)["prompt"]
+        for line in result.stdout.splitlines()
+        if line.strip()
+    ]
